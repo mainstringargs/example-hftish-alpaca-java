@@ -10,13 +10,14 @@ plugins {
 
 }
 
+// Apply the java-library plugin to add support for Java Library
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+
 sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 
-// Apply the java-library plugin to add support for Java Library
-apply plugin: 'java-library'
-apply plugin: 'eclipse'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
