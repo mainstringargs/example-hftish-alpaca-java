@@ -48,7 +48,7 @@ dependencies {
     
     compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.25'
     compile group: 'org.slf4j', name:'slf4j-log4j12', version: '1.7.25'
-    compile "io.github.mainstringargs:alpaca-java:3.0.0"
+    compile "io.github.mainstringargs:alpaca-java:3.0.2"
     compile 'info.picocli:picocli:4.0.0-alpha-3'
 }
 

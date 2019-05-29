@@ -20,6 +20,12 @@ public class Algorithm implements Runnable {
   /** The algo config. */
   private AlgoConfig algoConfig;
 
+  /** The polygon api. */
+  private final PolygonAPI polygonApi;
+
+  /** The alpaca api. */
+  private final AlpacaAPI alpacaApi;
+
   /**
    * Gets the algo config.
    *
@@ -37,10 +43,10 @@ public class Algorithm implements Runnable {
   public Algorithm(AlgoConfig algoConfig) {
     this.algoConfig = algoConfig;
 
-    PolygonAPI polygonApi = new PolygonAPI();
+    polygonApi = new PolygonAPI();
     polygonApi.addPolygonStreamListener(new AlgoPolygonStreamListener(this));
 
-    AlpacaAPI alpacaApi = new AlpacaAPI();
+    alpacaApi = new AlpacaAPI();
     alpacaApi.addAlpacaStreamListener(new AlgoAlpacaStreamListener(this));
 
   }
@@ -77,7 +83,9 @@ public class Algorithm implements Runnable {
   }
 
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Runnable#run()
    */
   @Override
