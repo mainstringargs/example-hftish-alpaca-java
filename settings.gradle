@@ -15,4 +15,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'gradle-project-bootstrap'
+rootProject.name = 'example-hftish-alpaca-java'

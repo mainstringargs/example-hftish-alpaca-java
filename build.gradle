@@ -26,9 +26,9 @@ apply plugin: 'java-library'
 apply plugin: 'eclipse'
 apply plugin: 'com.bmuschko.nexus'
 
-archivesBaseName = 'gradle-project-bootstrap'
+archivesBaseName = 'example-hftish-alpaca-java'
 group = 'io.github.mainstringargs'
-version = '1.0'
+version = '1.0.0'
 
 
 sourceCompatibility = '1.8'
@@ -66,14 +66,14 @@ jar {
 
 modifyPom {
     project {
-        name 'gradle-project-bootstrap'
-        description 'Bootstrap Project for Gradle.'
-        url 'https://github.com/mainstringargs/gradle-project-bootstrap'
+        name 'example-hftish-alpaca-java'
+        description 'Example HFTish Alpaca Java.'
+        url 'https://github.com/mainstringargs/example-hftish-alpaca-java'
         inceptionYear '2018'
         scm {
-            url 'https://github.com/mainstringargs/gradle-project-bootstrap'
-            connection 'https://github.com/mainstringargs/gradle-project-bootstrap.git'
-            developerConnection 'https://github.com/mainstringargs/gradle-project-bootstrap.git'
+            url 'https://github.com/mainstringargs/example-hftish-alpaca-java'
+            connection 'https://github.com/mainstringargs/example-hftish-alpaca-java.git'
+            developerConnection 'https://github.com/mainstringargs/example-hftish-alpaca-java.git'
         }
         licenses {
             license {
@@ -105,4 +105,9 @@ nexus {
 
 nexusStaging {
     packageGroup = "io.github.mainstringargs" //optional if packageGroup == project.getGroup()
+}
+
+
+if (hasProperty('buildScan')) {
+	buildScan { licenseAgreementUrl = 'https://gradle.com/terms-of-service'; licenseAgree = 'yes' }
 }
