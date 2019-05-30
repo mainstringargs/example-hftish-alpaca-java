@@ -1,12 +1,7 @@
 package io.github.mainstringargs.alpaca.hftish;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import io.github.mainstringargs.polygon.enums.ChannelType;
-import io.github.mainstringargs.polygon.nats.PolygonStreamListener;
+import io.github.mainstringargs.polygon.nats.PolygonStreamListenerAdapter;
 import io.github.mainstringargs.polygon.nats.message.ChannelMessage;
 import io.github.mainstringargs.polygon.nats.message.QuotesMessage;
 import io.github.mainstringargs.polygon.nats.message.TradesMessage;
@@ -20,7 +15,7 @@ import io.github.mainstringargs.polygon.nats.message.TradesMessage;
  *
  * @see AlgoPolygonStreamEvent
  */
-public class AlgoPolygonStreamListener implements PolygonStreamListener {
+public class AlgoPolygonStreamListener extends PolygonStreamListenerAdapter {
 
   /** The algorithm. */
   private Algorithm algorithm;
@@ -31,24 +26,10 @@ public class AlgoPolygonStreamListener implements PolygonStreamListener {
    * @param algorithm the algorithm
    */
   public AlgoPolygonStreamListener(Algorithm algorithm) {
+    super(algorithm.getAlgoConfig().getSymbol(), ChannelType.QUOTES, ChannelType.TRADES);
     this.algorithm = algorithm;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see io.github.mainstringargs.polygon.nats.PolygonStreamListener#getStockChannelTypes()
-   */
-  @Override
-  public Map<String, Set<ChannelType>> getStockChannelTypes() {
-
-    HashMap<String, Set<ChannelType>> stockChannelTypes = new HashMap<>();
-
-    stockChannelTypes.put(algorithm.getAlgoConfig().getSymbol(),
-        new HashSet<ChannelType>(Arrays.asList(ChannelType.QUOTES, ChannelType.TRADES)));
-
-    return stockChannelTypes;
-  }
 
   /*
    * (non-Javadoc)

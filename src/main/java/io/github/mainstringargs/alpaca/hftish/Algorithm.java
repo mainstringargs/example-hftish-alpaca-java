@@ -45,13 +45,17 @@ public class Algorithm implements Runnable {
   public Algorithm(AlgoConfig algoConfig) {
     this.algoConfig = algoConfig;
 
-    polygonApi = new PolygonAPI();
-    polygonApi.addPolygonStreamListener(new AlgoPolygonStreamListener(this));
-
-    alpacaApi = new AlpacaAPI();
-    alpacaApi.addAlpacaStreamListener(new AlgoAlpacaStreamListener(this));
-
     quote = new Quote();
+    polygonApi = new PolygonAPI();
+    alpacaApi = new AlpacaAPI();
+
+    startStreamListeners();
+  }
+
+  private void startStreamListeners() {
+
+    polygonApi.addPolygonStreamListener(new AlgoPolygonStreamListener(this));
+    alpacaApi.addAlpacaStreamListener(new AlgoAlpacaStreamListener(this));
   }
 
   /**

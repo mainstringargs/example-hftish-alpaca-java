@@ -1,10 +1,7 @@
 package io.github.mainstringargs.alpaca.hftish;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import io.github.mainstringargs.alpaca.enums.MessageType;
-import io.github.mainstringargs.alpaca.websocket.AlpacaStreamListener;
+import io.github.mainstringargs.alpaca.websocket.AlpacaStreamListenerAdapter;
 import io.github.mainstringargs.alpaca.websocket.message.OrderUpdateMessage;
 import io.github.mainstringargs.alpaca.websocket.message.UpdateMessage;
 
@@ -17,7 +14,7 @@ import io.github.mainstringargs.alpaca.websocket.message.UpdateMessage;
  *
  * @see AlgoAlpacaStreamEvent
  */
-public class AlgoAlpacaStreamListener implements AlpacaStreamListener {
+public class AlgoAlpacaStreamListener extends AlpacaStreamListenerAdapter {
 
   /** The algorithm. */
   private Algorithm algorithm;
@@ -28,19 +25,17 @@ public class AlgoAlpacaStreamListener implements AlpacaStreamListener {
    * @param algorithm the algorithm
    */
   public AlgoAlpacaStreamListener(Algorithm algorithm) {
+    super(MessageType.ORDER_UPDATES);
     this.algorithm = algorithm;
   }
 
-  /* (non-Javadoc)
-   * @see io.github.mainstringargs.alpaca.websocket.AlpacaStreamListener#getMessageTypes()
-   */
-  @Override
-  public Set<MessageType> getMessageTypes() {
-    return new HashSet<MessageType>(Arrays.asList(MessageType.ORDER_UPDATES));
-  }
 
-  /* (non-Javadoc)
-   * @see io.github.mainstringargs.alpaca.websocket.AlpacaStreamListener#streamUpdate(io.github.mainstringargs.alpaca.enums.MessageType, io.github.mainstringargs.alpaca.websocket.message.UpdateMessage)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see io.github.mainstringargs.alpaca.websocket.AlpacaStreamListener#streamUpdate(io.github.
+   * mainstringargs.alpaca.enums.MessageType,
+   * io.github.mainstringargs.alpaca.websocket.message.UpdateMessage)
    */
   @Override
   public void streamUpdate(MessageType messageType, UpdateMessage message) {
