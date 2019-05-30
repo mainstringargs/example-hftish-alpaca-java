@@ -26,7 +26,11 @@ public class Algorithm implements Runnable {
   /** The alpaca api. */
   private final AlpacaAPI alpacaApi;
 
+  /** The quote. */
   private Quote quote;
+
+  /** The position. */
+  private Position position;
 
   /**
    * Gets the algo config.
@@ -46,12 +50,17 @@ public class Algorithm implements Runnable {
     this.algoConfig = algoConfig;
 
     quote = new Quote();
+    position = new Position();
+
     polygonApi = new PolygonAPI();
     alpacaApi = new AlpacaAPI();
 
     startStreamListeners();
   }
 
+  /**
+   * Start stream listeners.
+   */
   private void startStreamListeners() {
 
     polygonApi.addPolygonStreamListener(new AlgoPolygonStreamListener(this));

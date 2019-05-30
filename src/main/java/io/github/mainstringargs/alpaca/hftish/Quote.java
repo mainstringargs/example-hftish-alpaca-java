@@ -53,7 +53,7 @@ public class Quote {
   /**
    * Called when a level change happens.
    */
-  public void reset() {
+  public synchronized void reset() {
     traded = false;
     levelCt += 1;
   }
@@ -75,7 +75,7 @@ public class Quote {
    *
    * @param quote the quote
    */
-  public void update(StockQuote quote) {
+  public synchronized void update(StockQuote quote) {
     // Update bid and ask sizes and timestamp
     this.bidSize = quote.getBs();
     this.askSize = quote.getAs();
@@ -108,91 +108,91 @@ public class Quote {
     }
   }
 
-  public double getPrevBid() {
+  public synchronized double getPrevBid() {
     return prevBid;
   }
 
-  public void setPrevBid(double prevBid) {
+  public synchronized void setPrevBid(double prevBid) {
     this.prevBid = prevBid;
   }
 
-  public double getPrevAsk() {
+  public synchronized double getPrevAsk() {
     return prevAsk;
   }
 
-  public void setPrevAsk(double prevAsk) {
+  public synchronized void setPrevAsk(double prevAsk) {
     this.prevAsk = prevAsk;
   }
 
-  public double getPrevSpread() {
+  public synchronized double getPrevSpread() {
     return prevSpread;
   }
 
-  public void setPrevSpread(double prevSpread) {
+  public synchronized void setPrevSpread(double prevSpread) {
     this.prevSpread = prevSpread;
   }
 
-  public double getBid() {
+  public synchronized double getBid() {
     return bid;
   }
 
-  public void setBid(double bid) {
+  public synchronized void setBid(double bid) {
     this.bid = bid;
   }
 
-  public double getAsk() {
+  public synchronized double getAsk() {
     return ask;
   }
 
-  public void setAsk(double ask) {
+  public synchronized void setAsk(double ask) {
     this.ask = ask;
   }
 
-  public long getBidSize() {
+  public synchronized long getBidSize() {
     return bidSize;
   }
 
-  public void setBidSize(long bidSize) {
+  public synchronized void setBidSize(long bidSize) {
     this.bidSize = bidSize;
   }
 
-  public long getAskSize() {
+  public synchronized long getAskSize() {
     return askSize;
   }
 
-  public void setAskSize(long askSize) {
+  public synchronized void setAskSize(long askSize) {
     this.askSize = askSize;
   }
 
-  public double getSpread() {
+  public synchronized double getSpread() {
     return spread;
   }
 
-  public void setSpread(double spread) {
+  public synchronized void setSpread(double spread) {
     this.spread = spread;
   }
 
-  public boolean isTraded() {
+  public synchronized boolean isTraded() {
     return traded;
   }
 
-  public void setTraded(boolean traded) {
+  public synchronized void setTraded(boolean traded) {
     this.traded = traded;
   }
 
-  public long getLevelCt() {
+  public synchronized long getLevelCt() {
     return levelCt;
   }
 
-  public void setLevelCt(long levelCt) {
+  public synchronized void setLevelCt(long levelCt) {
     this.levelCt = levelCt;
   }
 
-  public long getTime() {
+  public synchronized long getTime() {
     return time;
   }
 
-  public void setTime(long time) {
+  public synchronized void setTime(long time) {
     this.time = time;
   }
 
