@@ -5,14 +5,13 @@ import io.github.mainstringargs.alpaca.websocket.AlpacaStreamListenerAdapter;
 import io.github.mainstringargs.alpaca.websocket.message.OrderUpdateMessage;
 import io.github.mainstringargs.alpaca.websocket.message.UpdateMessage;
 
+
 /**
  * The listener interface for receiving algoAlpacaStream events. The class that is interested in
  * processing a algoAlpacaStream event implements this interface, and the object created with that
  * class is registered with a component using the component's
- * <code>addAlgoAlpacaStreamListener<code> method. When the algoAlpacaStream event occurs, that
+ * <code>addAlgoAlpacaStreamListener</code> method. When the algoAlpacaStream event occurs, that
  * object's appropriate method is invoked.
- *
- * @see AlgoAlpacaStreamEvent
  */
 public class AlgoAlpacaStreamListener extends AlpacaStreamListenerAdapter {
 
@@ -30,12 +29,9 @@ public class AlgoAlpacaStreamListener extends AlpacaStreamListenerAdapter {
   }
 
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see io.github.mainstringargs.alpaca.websocket.AlpacaStreamListener#streamUpdate(io.github.
-   * mainstringargs.alpaca.enums.MessageType,
-   * io.github.mainstringargs.alpaca.websocket.message.UpdateMessage)
+
+  /* (non-Javadoc)
+   * @see io.github.mainstringargs.alpaca.websocket.AlpacaStreamListenerAdapter#streamUpdate(io.github.mainstringargs.alpaca.enums.MessageType, io.github.mainstringargs.alpaca.websocket.message.UpdateMessage)
    */
   @Override
   public void streamUpdate(MessageType messageType, UpdateMessage message) {
