@@ -26,6 +26,8 @@ public class Algorithm implements Runnable {
   /** The alpaca api. */
   private final AlpacaAPI alpacaApi;
 
+  private Quote quote;
+
   /**
    * Gets the algo config.
    *
@@ -49,6 +51,7 @@ public class Algorithm implements Runnable {
     alpacaApi = new AlpacaAPI();
     alpacaApi.addAlpacaStreamListener(new AlgoAlpacaStreamListener(this));
 
+    quote = new Quote();
   }
 
   /**
@@ -58,7 +61,8 @@ public class Algorithm implements Runnable {
    */
   public void onQuote(QuotesMessage message) {
     LOGGER.info("onQuote " + message);
-
+    quote.update(message.getStockQuote());
+    LOGGER.info("updatedQuote " + quote);
   }
 
 
