@@ -1,11 +1,16 @@
 package io.github.mainstringargs.alpaca.hftish;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.github.mainstringargs.alpaca.AlpacaAPI;
+import io.github.mainstringargs.alpaca.domain.Asset;
 import io.github.mainstringargs.alpaca.domain.Order;
+import io.github.mainstringargs.alpaca.enums.Direction;
 import io.github.mainstringargs.alpaca.enums.OrderEvent;
 import io.github.mainstringargs.alpaca.enums.OrderSide;
+import io.github.mainstringargs.alpaca.enums.OrderStatus;
 import io.github.mainstringargs.alpaca.enums.OrderTimeInForce;
 import io.github.mainstringargs.alpaca.enums.OrderType;
 import io.github.mainstringargs.alpaca.rest.exceptions.AlpacaAPIException;
@@ -61,7 +66,58 @@ public class Algorithm implements Runnable {
     polygonApi = new PolygonAPI();
     alpacaApi = new AlpacaAPI();
 
+    cancelPendingOrders();
+    updateInitialStates();
+
     startStreamListeners();
+  }
+
+  private void cancelPendingOrders() {
+    List<Order> orders = null;
+    try {
+      orders = alpacaApi.getOrders(OrderStatus.OPEN, 50, null, LocalDateTime.now(), Direction.ASC);
+    } catch (AlpacaAPIException e) {
+      e.printStackTrace();
+    }
+
+    if (orders != null) {
+      for (Order order : orders) {
+
+        if (order.getSymbol().trim().equalsIgnoreCase(algoConfig.getSymbol().trim())) {
+          try {
+            boolean cancelledOrder = alpacaApi.cancelOrder(order.getId());
+
+            LOGGER.info("Cancelling " + order.getId() + " " + cancelledOrder);
+          } catch (AlpacaAPIException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+
+  }
+
+  private void updateInitialStates() {
+    String ticker = algoConfig.getSymbol();
+
+    io.github.mainstringargs.alpaca.domain.Position currentPosition = null;
+
+    try {
+      currentPosition = alpacaApi.getOpenPositionBySymbol(ticker.trim());
+    } catch (AlpacaAPIException e) {
+      e.printStackTrace();
+    }
+
+    if (currentPosition != null) {
+      String qtyForTicker = currentPosition.getQty();
+
+      if (qtyForTicker != null && !qtyForTicker.isEmpty()) {
+        Integer qtyInt = Integer.parseInt(qtyForTicker);
+        LOGGER.info("Currently own " + qtyInt + " of " + ticker);
+        position.setTotalShares(qtyInt);
+      }
+    }
+
   }
 
   /**

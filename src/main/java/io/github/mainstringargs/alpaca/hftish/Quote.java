@@ -94,7 +94,7 @@ public class Quote {
       this.prevSpread = round(this.prevAsk - this.prevBid, 3);
       this.spread = round(this.ask - this.bid, 3);
 
-      LOGGER.info("Level Change: " + this.prevBid + " " + this.prevAsk + " " + this.prevSpread + " "
+      LOGGER.debug("Level Change: " + this.prevBid + " " + this.prevAsk + " " + this.prevSpread + " "
           + this.bid + " " + this.ask + " " + this.spread);
 
       // If change is from one penny spread level to a different penny
