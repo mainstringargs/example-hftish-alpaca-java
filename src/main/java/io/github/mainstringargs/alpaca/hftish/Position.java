@@ -49,17 +49,21 @@ public class Position {
    * @param side the side
    */
   public synchronized void updateFilledAmount(String orderId, long newAmount, String side) {
-    Long oldAmount = this.ordersFilledAmount.get(orderId);
+    Long oldAmount = this.ordersFilledAmount.get(orderId.trim());
 
-    if (oldAmount != null && newAmount > oldAmount) {
-      if (side.equalsIgnoreCase("Buy")) {
+    if (oldAmount == null) {
+      oldAmount = 0L;
+    }
+
+    if (newAmount > oldAmount) {
+      if (side.trim().equalsIgnoreCase("Buy")) {
         updatePendingBuyShares(oldAmount - newAmount);
         updateTotalShares(newAmount - oldAmount);
       } else {
         updatePendingSellShares(oldAmount - newAmount);
         updateTotalShares(oldAmount - newAmount);
       }
-      this.ordersFilledAmount.put(orderId, newAmount);
+      this.ordersFilledAmount.put(orderId.trim(), newAmount);
     }
   }
 
@@ -70,16 +74,20 @@ public class Position {
    * @param side the side
    */
   public synchronized void removePendingOrder(String orderId, String side) {
-    Long oldAmount = this.ordersFilledAmount.get(orderId);
+    Long oldAmount = this.ordersFilledAmount.get(orderId.trim());
 
-    if (oldAmount != null && side.equalsIgnoreCase("Buy")) {
+    if (oldAmount == null) {
+      oldAmount = 0L;
+    }
+
+    if (side.trim().equalsIgnoreCase("Buy")) {
       updatePendingBuyShares(oldAmount - 100);
     } else {
       updatePendingSellShares(oldAmount - 100);
     }
 
 
-    this.ordersFilledAmount.remove(orderId);
+    this.ordersFilledAmount.remove(orderId.trim());
 
   }
 
@@ -148,12 +156,13 @@ public class Position {
   }
 
   /**
-   * Gets the orders filled amount.
+   * Sets the orders filled amount.
    *
-   * @return the orders filled amount
+   * @param orderId the order id
+   * @param filledAmount the filled amount
    */
-  public synchronized Map<String, Long> getOrdersFilledAmount() {
-    return ordersFilledAmount;
+  public synchronized void setOrdersFilledAmount(String orderId, long filledAmount) {
+    ordersFilledAmount.put(orderId, filledAmount);
   }
 
   /*
