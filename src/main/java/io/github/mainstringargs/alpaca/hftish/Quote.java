@@ -59,7 +59,7 @@ public class Quote {
   }
 
   /**
-   * Round value to specified number of places
+   * Round value to specified number of places.
    *
    * @param value the value
    * @param places the places
@@ -71,7 +71,7 @@ public class Quote {
   }
 
   /**
-   * Update the Quote
+   * Update the Quote.
    *
    * @param quote the quote
    */
@@ -108,94 +108,207 @@ public class Quote {
     }
   }
 
+  /**
+   * Gets the prev bid.
+   *
+   * @return the prev bid
+   */
   public synchronized double getPrevBid() {
     return prevBid;
   }
 
+  /**
+   * Sets the prev bid.
+   *
+   * @param prevBid the new prev bid
+   */
   public synchronized void setPrevBid(double prevBid) {
     this.prevBid = prevBid;
   }
 
+  /**
+   * Gets the prev ask.
+   *
+   * @return the prev ask
+   */
   public synchronized double getPrevAsk() {
     return prevAsk;
   }
 
+  /**
+   * Sets the prev ask.
+   *
+   * @param prevAsk the new prev ask
+   */
   public synchronized void setPrevAsk(double prevAsk) {
     this.prevAsk = prevAsk;
   }
 
+  /**
+   * Gets the prev spread.
+   *
+   * @return the prev spread
+   */
   public synchronized double getPrevSpread() {
     return prevSpread;
   }
 
+  /**
+   * Sets the prev spread.
+   *
+   * @param prevSpread the new prev spread
+   */
   public synchronized void setPrevSpread(double prevSpread) {
     this.prevSpread = prevSpread;
   }
 
+  /**
+   * Gets the bid.
+   *
+   * @return the bid
+   */
   public synchronized double getBid() {
     return bid;
   }
 
+  /**
+   * Sets the bid.
+   *
+   * @param bid the new bid
+   */
   public synchronized void setBid(double bid) {
     this.bid = bid;
   }
 
+  /**
+   * Gets the ask.
+   *
+   * @return the ask
+   */
   public synchronized double getAsk() {
     return ask;
   }
 
+  /**
+   * Sets the ask.
+   *
+   * @param ask the new ask
+   */
   public synchronized void setAsk(double ask) {
     this.ask = ask;
   }
 
+  /**
+   * Gets the bid size.
+   *
+   * @return the bid size
+   */
   public synchronized long getBidSize() {
     return bidSize;
   }
 
+  /**
+   * Sets the bid size.
+   *
+   * @param bidSize the new bid size
+   */
   public synchronized void setBidSize(long bidSize) {
     this.bidSize = bidSize;
   }
 
+  /**
+   * Gets the ask size.
+   *
+   * @return the ask size
+   */
   public synchronized long getAskSize() {
     return askSize;
   }
 
+  /**
+   * Sets the ask size.
+   *
+   * @param askSize the new ask size
+   */
   public synchronized void setAskSize(long askSize) {
     this.askSize = askSize;
   }
 
+  /**
+   * Gets the spread.
+   *
+   * @return the spread
+   */
   public synchronized double getSpread() {
     return spread;
   }
 
+  /**
+   * Sets the spread.
+   *
+   * @param spread the new spread
+   */
   public synchronized void setSpread(double spread) {
     this.spread = spread;
   }
 
+  /**
+   * Checks if is traded.
+   *
+   * @return true, if is traded
+   */
   public synchronized boolean isTraded() {
     return traded;
   }
 
+  /**
+   * Sets the traded.
+   *
+   * @param traded the new traded
+   */
   public synchronized void setTraded(boolean traded) {
     this.traded = traded;
   }
 
+  /**
+   * Gets the level ct.
+   *
+   * @return the level ct
+   */
   public synchronized long getLevelCt() {
     return levelCt;
   }
 
+  /**
+   * Sets the level ct.
+   *
+   * @param levelCt the new level ct
+   */
   public synchronized void setLevelCt(long levelCt) {
     this.levelCt = levelCt;
   }
 
+  /**
+   * Gets the time.
+   *
+   * @return the time
+   */
   public synchronized long getTime() {
     return time;
   }
 
+  /**
+   * Sets the time.
+   *
+   * @param time the new time
+   */
   public synchronized void setTime(long time) {
     this.time = time;
   }
 
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
   @Override
   public String toString() {
     return "Quote [prevBid=" + prevBid + ", prevAsk=" + prevAsk + ", prevSpread=" + prevSpread

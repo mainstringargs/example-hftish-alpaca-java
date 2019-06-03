@@ -12,6 +12,8 @@ import io.github.mainstringargs.alpaca.websocket.message.UpdateMessage;
  * class is registered with a component using the component's
  * <code>addAlgoAlpacaStreamListener</code> method. When the algoAlpacaStream event occurs, that
  * object's appropriate method is invoked.
+ *
+ * @see UpdateMessage
  */
 public class AlgoAlpacaStreamListener extends AlpacaStreamListenerAdapter {
 

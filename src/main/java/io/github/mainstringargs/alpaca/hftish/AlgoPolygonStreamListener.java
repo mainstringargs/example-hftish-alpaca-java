@@ -13,6 +13,8 @@ import io.github.mainstringargs.polygon.nats.message.TradesMessage;
  * class is registered with a component using the component's
  * <code>addAlgoPolygonStreamListener</code> method. When the algoPolygonStream event occurs, that
  * object's appropriate method is invoked.
+ *
+ * @see ChannelMessage
  */
 public class AlgoPolygonStreamListener extends PolygonStreamListenerAdapter {
 

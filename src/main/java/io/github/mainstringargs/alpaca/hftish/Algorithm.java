@@ -71,6 +71,9 @@ public class Algorithm implements Runnable {
     startStreamListeners();
   }
 
+  /**
+   * Cancel pending orders.
+   */
   private void cancelPendingOrders() {
     List<Order> orders = null;
     try {
@@ -96,6 +99,9 @@ public class Algorithm implements Runnable {
 
   }
 
+  /**
+   * Update initial states.
+   */
   private void updateInitialStates() {
     String ticker = algoConfig.getSymbol();
 
