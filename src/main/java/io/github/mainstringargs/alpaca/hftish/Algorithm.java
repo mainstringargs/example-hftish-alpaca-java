@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.github.mainstringargs.alpaca.AlpacaAPI;
-import io.github.mainstringargs.alpaca.domain.Asset;
 import io.github.mainstringargs.alpaca.domain.Order;
 import io.github.mainstringargs.alpaca.enums.Direction;
 import io.github.mainstringargs.alpaca.enums.OrderEvent;
