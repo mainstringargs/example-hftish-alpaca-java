@@ -21,7 +21,7 @@ import io.github.mainstringargs.polygon.nats.message.TradesMessage;
 /**
  * The Class Algorithm.
  */
-public class Algorithm implements Runnable {
+public class Algorithm {
 
 
   /** The logger. */
@@ -189,7 +189,7 @@ public class Algorithm implements Runnable {
           position.updatePendingBuyShares(100);
           position.setOrdersFilledAmount(order.getId(), 0);
 
-          LOGGER.info("Buy at " + quote.getAsk());
+          LOGGER.info("Buy " + 100 + " of " + algoConfig.getSymbol() + " at $" + quote.getAsk());
 
           quote.setTraded(true);
 
@@ -201,16 +201,23 @@ public class Algorithm implements Runnable {
           && Double.compare(quote.getAskSize(), quote.getBidSize() * 1.8) > 0.0
           && ((position.getTotalShares() - position.getPendingSellShares()) >= 100)) {
 
+        long numberToSell = 100;
+
+        if (numberToSell > position.getTotalShares()) {
+          numberToSell = position.getTotalShares();
+        }
+
         try {
-          Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), 100, OrderSide.SELL,
-              OrderType.LIMIT, OrderTimeInForce.DAY, quote.getBid(), null, null);
+          Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), (int) numberToSell,
+              OrderSide.SELL, OrderType.LIMIT, OrderTimeInForce.DAY, quote.getBid(), null, null);
           // Approximate an IOC order by immediately cancelling
           alpacaApi.cancelOrder(order.getId());
 
-          position.updatePendingSellShares(100);
+          position.updatePendingSellShares(numberToSell);
           position.setOrdersFilledAmount(order.getId(), 0);
 
-          LOGGER.info("Sell at " + quote.getAsk());
+          LOGGER.info(
+              "Sell " + numberToSell + " of " + algoConfig.getSymbol() + " at $" + quote.getAsk());
 
           quote.setTraded(true);
 
@@ -237,25 +244,16 @@ public class Algorithm implements Runnable {
         position.updateTotalShares(-1 * Integer.parseInt(message.getOrder().getFilledQty()));
       }
 
-      position.removePendingOrder(message.getOrder().getId(), message.getOrder().getSide());
+      position.removePendingOrder(message.getOrder().getId(),
+          Integer.parseInt(message.getOrder().getFilledQty()), message.getOrder().getSide());
     } else if (message.getEvent() == OrderEvent.PARTIALLY_FILLED) {
       position.updateFilledAmount(message.getOrder().getId(),
           Integer.parseInt(message.getOrder().getFilledQty()), message.getOrder().getSide());
     } else if (message.getEvent() == OrderEvent.CANCELED
-        && message.getEvent() == OrderEvent.REJECTED) {
-      position.removePendingOrder(message.getOrder().getId(), message.getOrder().getSide());
+        || message.getEvent() == OrderEvent.REJECTED) {
+      position.removePendingOrder(message.getOrder().getId(),
+          Integer.parseInt(message.getOrder().getQty()), message.getOrder().getSide());
     }
-  }
-
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Runnable#run()
-   */
-  @Override
-  public void run() {
-
   }
 
 }

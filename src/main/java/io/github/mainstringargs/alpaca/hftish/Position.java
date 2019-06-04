@@ -71,9 +71,10 @@ public class Position {
    * Removes the pending order.
    *
    * @param orderId the order id
+   * @param qty the qty
    * @param side the side
    */
-  public synchronized void removePendingOrder(String orderId, String side) {
+  public synchronized void removePendingOrder(String orderId, int qty, String side) {
     Long oldAmount = this.ordersFilledAmount.get(orderId.trim());
 
     if (oldAmount == null) {
@@ -81,9 +82,9 @@ public class Position {
     }
 
     if (side.trim().equalsIgnoreCase("Buy")) {
-      updatePendingBuyShares(oldAmount - 100);
+      updatePendingBuyShares(oldAmount - qty);
     } else {
-      updatePendingSellShares(oldAmount - 100);
+      updatePendingSellShares(oldAmount - qty);
     }
 
 

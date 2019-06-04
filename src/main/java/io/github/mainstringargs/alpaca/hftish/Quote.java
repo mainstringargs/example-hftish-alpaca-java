@@ -42,7 +42,7 @@ public class Quote {
   private double spread = 0.0;
 
   /** The traded. */
-  private boolean traded = false;
+  private boolean traded = true;
 
   /** The level ct. */
   private long levelCt = 1;
