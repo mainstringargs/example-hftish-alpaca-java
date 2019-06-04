@@ -81,8 +81,8 @@ public class Quote {
     this.askSize = quote.getAs();
 
     // Check if there has been a level change
-    if (Double.compare(bid, quote.getBp()) != 0 && Double.compare(ask, quote.getAp()) != 0
-        && Double.compare(round(quote.getAp() - quote.getBp(), 2), .01) == 0) {
+    if (Double.compare(bid, quote.getBp()) != 0.0 && Double.compare(ask, quote.getAp()) != 0.0d
+        && (Math.abs(round(quote.getAp() - quote.getBp(), 2) - .01) < Algorithm.DOUBLE_THRESHOLD)) {
       // Update bids and asks and time of level change
       this.prevBid = this.bid;
       this.prevAsk = this.ask;
@@ -94,13 +94,13 @@ public class Quote {
       this.prevSpread = round(this.prevAsk - this.prevBid, 3);
       this.spread = round(this.ask - this.bid, 3);
 
-      LOGGER.debug("Level Change: " + this.prevBid + " " + this.prevAsk + " " + this.prevSpread + " "
-          + this.bid + " " + this.ask + " " + this.spread);
+      LOGGER.debug("Level Change: " + this.prevBid + " " + this.prevAsk + " " + this.prevSpread
+          + " " + this.bid + " " + this.ask + " " + this.spread);
 
       // If change is from one penny spread level to a different penny
       // spread level, then initialize for new level (reset stale vars)
 
-      if (Double.compare(prevSpread, 0.01) == 0) {
+      if (Math.abs(prevSpread - 0.01) < Algorithm.DOUBLE_THRESHOLD) {
         this.reset();
       }
 
@@ -306,7 +306,9 @@ public class Quote {
     this.time = time;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#toString()
    */
   @Override

@@ -42,6 +42,9 @@ public class Algorithm implements Runnable {
   /** The position. */
   private Position position;
 
+  /** The Constant DOUBLE_THRESHOLD. */
+  public static final double DOUBLE_THRESHOLD = .0001;
+
   /**
    * Gets the algo config.
    *
@@ -172,8 +175,8 @@ public class Algorithm implements Runnable {
       // a movement in that direction. We also want to be sure that
       // we're not buying or selling more than we should.
 
-      if (Double.compare(message.getStockTrade().getP(), quote.getAsk()) == 0
-          && Double.compare(quote.getBidSize(), quote.getAskSize() * 1.8) > 0
+      if (Math.abs(message.getStockTrade().getP() - quote.getAsk()) < DOUBLE_THRESHOLD
+          && Double.compare(quote.getBidSize(), quote.getAskSize() * 1.8) > 0.0
           && ((position.getTotalShares() + position.getPendingBuyShares()) < algoConfig
               .getQuantity() - 100)) {
 
@@ -194,8 +197,8 @@ public class Algorithm implements Runnable {
           e.printStackTrace();
         }
 
-      } else if (Double.compare(message.getStockTrade().getP(), quote.getBid()) == 0
-          && Double.compare(quote.getAskSize(), quote.getBidSize() * 1.8) > 0
+      } else if (Math.abs(message.getStockTrade().getP() - quote.getBid()) < DOUBLE_THRESHOLD
+          && Double.compare(quote.getAskSize(), quote.getBidSize() * 1.8) > 0.0
           && ((position.getTotalShares() - position.getPendingSellShares()) >= 100)) {
 
         try {
