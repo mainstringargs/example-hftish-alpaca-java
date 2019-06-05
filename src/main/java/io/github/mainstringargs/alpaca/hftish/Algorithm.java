@@ -201,7 +201,8 @@ public class Algorithm {
 
       } else if (Math.abs(message.getStockTrade().getP() - quote.getBid()) < DOUBLE_THRESHOLD
           && Double.compare(quote.getAskSize(), quote.getBidSize() * 1.8) > 0.0
-          && ((position.getTotalShares() - position.getPendingSellShares()) >= 100)) {
+          && ((position.getTotalShares() - position.getPendingSellShares()) >= 100)
+          && position.getTotalShares() > 0) {
 
         long numberToSell = 100;
 
