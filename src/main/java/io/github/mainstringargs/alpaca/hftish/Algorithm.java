@@ -142,7 +142,7 @@ public class Algorithm {
    *
    * @param message the message
    */
-  public void onQuote(QuotesMessage message) {
+  public synchronized void onQuote(QuotesMessage message) {
     LOGGER.debug("onQuote " + message);
     quote.update(message.getStockQuote());
     LOGGER.debug("updatedQuote " + quote);
@@ -154,7 +154,7 @@ public class Algorithm {
    *
    * @param message the message
    */
-  public void onTrade(TradesMessage message) {
+  public synchronized void onTrade(TradesMessage message) {
     LOGGER.debug("onTrade " + message);
 
     if (quote.isTraded()) {
@@ -238,7 +238,7 @@ public class Algorithm {
    *
    * @param message the message
    */
-  public void onTradeUpdates(OrderUpdateMessage message) {
+  public synchronized void onTradeUpdates(OrderUpdateMessage message) {
     LOGGER.debug("onTradeUpdates " + message);
 
     if (message.getEvent() == OrderEvent.FILL) {
