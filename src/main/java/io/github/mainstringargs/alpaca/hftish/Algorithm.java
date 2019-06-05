@@ -181,6 +181,9 @@ public class Algorithm {
               .getQuantity() - 100)) {
 
         try {
+
+          LOGGER.info("Buy " + 100 + " of " + algoConfig.getSymbol() + " at $" + quote.getAsk());
+
           Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), 100, OrderSide.BUY,
               OrderType.LIMIT, OrderTimeInForce.DAY, quote.getAsk(), null, null);
           // Approximate an IOC order by immediately cancelling
@@ -189,7 +192,6 @@ public class Algorithm {
           position.updatePendingBuyShares(100);
           position.setOrdersFilledAmount(order.getId(), 0);
 
-          LOGGER.info("Buy " + 100 + " of " + algoConfig.getSymbol() + " at $" + quote.getAsk());
 
           quote.setTraded(true);
 
@@ -208,6 +210,10 @@ public class Algorithm {
         }
 
         try {
+
+          LOGGER.info(
+              "Sell " + numberToSell + " of " + algoConfig.getSymbol() + " at $" + quote.getAsk());
+
           Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), (int) numberToSell,
               OrderSide.SELL, OrderType.LIMIT, OrderTimeInForce.DAY, quote.getBid(), null, null);
           // Approximate an IOC order by immediately cancelling
@@ -216,8 +222,6 @@ public class Algorithm {
           position.updatePendingSellShares(numberToSell);
           position.setOrdersFilledAmount(order.getId(), 0);
 
-          LOGGER.info(
-              "Sell " + numberToSell + " of " + algoConfig.getSymbol() + " at $" + quote.getAsk());
 
           quote.setTraded(true);
 
