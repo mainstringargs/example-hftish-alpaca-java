@@ -1,10 +1,16 @@
 package io.github.mainstringargs.alpaca.hftish;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.github.mainstringargs.alpaca.AlpacaAPI;
+import io.github.mainstringargs.alpaca.Utilities;
+import io.github.mainstringargs.alpaca.domain.Clock;
 import io.github.mainstringargs.alpaca.domain.Order;
 import io.github.mainstringargs.alpaca.enums.Direction;
 import io.github.mainstringargs.alpaca.enums.OrderEvent;
@@ -17,6 +23,7 @@ import io.github.mainstringargs.alpaca.websocket.message.OrderUpdateMessage;
 import io.github.mainstringargs.polygon.PolygonAPI;
 import io.github.mainstringargs.polygon.nats.message.QuotesMessage;
 import io.github.mainstringargs.polygon.nats.message.TradesMessage;
+import io.github.mainstringargs.util.concurrency.ExecutorTracer;
 
 /**
  * The Class Algorithm.
@@ -42,8 +49,18 @@ public class Algorithm {
   /** The position. */
   private Position position;
 
+  /** The polygon stream listener. */
+  private AlgoPolygonStreamListener polygonStreamListener;
+
+  /** The alpaca stream listener. */
+  private AlgoAlpacaStreamListener alpacaStreamListener;
+
   /** The Constant DOUBLE_THRESHOLD. */
   public static final double DOUBLE_THRESHOLD = .0001;
+
+  /** The Constant scheduledService. */
+  private static final ScheduledExecutorService scheduledService =
+      ExecutorTracer.newScheduledThreadPool(1);
 
   /**
    * Gets the algo config.
@@ -68,10 +85,94 @@ public class Algorithm {
     polygonApi = new PolygonAPI();
     alpacaApi = new AlpacaAPI();
 
+    Clock marketClock = null;
+    try {
+      marketClock = alpacaApi.getClock();
+    } catch (AlpacaAPIException e1) {
+      e1.printStackTrace();
+    }
+
+    if (marketClock != null)
+      if (marketClock.isIsOpen()) {
+        init();
+      } else {
+        scheduleNextOpen(marketClock);
+      }
+
+  }
+
+  /**
+   * Inits the.
+   */
+  private void init() {
+    Clock marketClock = null;
+    try {
+      marketClock = alpacaApi.getClock();
+    } catch (AlpacaAPIException e1) {
+      e1.printStackTrace();
+    }
+
+    LOGGER.info("Market is now open. Current Clock " + marketClock);
+
+    scheduleNextClose(marketClock);
+
     cancelPendingOrders();
     updateInitialStates();
-
     startStreamListeners();
+  }
+
+
+  private void scheduleNextOpen(Clock marketClock) {
+
+    long delay = ChronoUnit.MILLIS.between(LocalTime.now(),
+        Utilities.fromDateTimeString(marketClock.getNextOpen()));
+
+    LOGGER.info("Market is closed. Will Open in "
+        + TimeUnit.MINUTES.convert(delay, TimeUnit.MILLISECONDS) + " minutes");
+
+    scheduledService.schedule(new Runnable() {
+
+      @Override
+      public void run() {
+        init();
+
+      }
+    }, delay, TimeUnit.MILLISECONDS);
+  }
+
+  /**
+   * Schedule next close.
+   *
+   * @param marketClock the market clock
+   */
+  private void scheduleNextClose(Clock marketClock) {
+
+    long delay = ChronoUnit.MILLIS.between(LocalTime.now(),
+        Utilities.fromDateTimeString(marketClock.getNextClose()));
+
+    LOGGER.info("Market will Close in " + TimeUnit.MINUTES.convert(delay, TimeUnit.MILLISECONDS)
+        + " minutes");
+
+    scheduledService.schedule(new Runnable() {
+
+      @Override
+      public void run() {
+        cancelPendingOrders();
+        closeStreamListeners();
+
+        Clock marketClock = null;
+        try {
+          marketClock = alpacaApi.getClock();
+        } catch (AlpacaAPIException e1) {
+          e1.printStackTrace();
+        }
+
+        LOGGER.info("Market is now closed. Current Clock " + marketClock);
+
+        scheduleNextOpen(marketClock);
+
+      }
+    }, delay, TimeUnit.MILLISECONDS);
   }
 
   /**
@@ -133,9 +234,22 @@ public class Algorithm {
    */
   private void startStreamListeners() {
 
-    polygonApi.addPolygonStreamListener(new AlgoPolygonStreamListener(this));
-    alpacaApi.addAlpacaStreamListener(new AlgoAlpacaStreamListener(this));
+    polygonStreamListener = new AlgoPolygonStreamListener(this);
+    alpacaStreamListener = new AlgoAlpacaStreamListener(this);
+
+    polygonApi.addPolygonStreamListener(polygonStreamListener);
+    alpacaApi.addAlpacaStreamListener(alpacaStreamListener);
   }
+
+
+  /**
+   * Close stream listeners.
+   */
+  protected void closeStreamListeners() {
+    polygonApi.removePolygonStreamListener(polygonStreamListener);
+    alpacaApi.removeAlpacaStreamListener(alpacaStreamListener);
+  }
+
 
   /**
    * On quote.
