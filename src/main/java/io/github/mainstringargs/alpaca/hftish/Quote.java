@@ -49,7 +49,7 @@ public class Quote {
 
   /** The time. */
   private long time = 0;
-
+  
   /**
    * Called when a level change happens.
    */
@@ -318,5 +318,6 @@ public class Quote {
         + ", spread=" + spread + ", traded=" + traded + ", levelCt=" + levelCt + ", time=" + time
         + "]";
   }
+
 
 }

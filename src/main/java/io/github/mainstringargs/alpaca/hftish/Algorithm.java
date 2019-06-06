@@ -117,6 +117,7 @@ public class Algorithm {
     scheduleNextClose(marketClock);
 
     cancelPendingOrders();
+    position.reset();
     updateInitialStates();
     startStreamListeners();
   }
@@ -157,8 +158,9 @@ public class Algorithm {
 
       @Override
       public void run() {
-        cancelPendingOrders();
         closeStreamListeners();
+        cancelPendingOrders();
+        position.reset();
 
         Clock marketClock = null;
         try {

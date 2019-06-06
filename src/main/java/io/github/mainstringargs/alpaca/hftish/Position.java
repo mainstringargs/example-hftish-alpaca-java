@@ -23,6 +23,18 @@ public class Position {
   /** The total shares. */
   private long totalShares = 0;
 
+
+  /**
+   * Reset.
+   */
+  public synchronized void reset() {
+    ordersFilledAmount.clear();
+    pendingBuyShares = 0;
+    pendingSellShares = 0;
+    totalShares = 0;
+  }
+
+
   /**
    * Update pending buy shares.
    *
