@@ -2,7 +2,6 @@ package io.github.mainstringargs.alpaca.hftish;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -135,7 +134,7 @@ public class Algorithm {
    */
   private void scheduleNextOpen(Clock marketClock) {
 
-    long delay = ChronoUnit.MILLIS.between(LocalTime.now(),
+    long delay = ChronoUnit.MILLIS.between(LocalDateTime.now(),
         Utilities.fromDateTimeString(marketClock.getNextOpen()));
 
     if (delay < 0) {
@@ -179,7 +178,7 @@ public class Algorithm {
    */
   private void scheduleNextClose(Clock marketClock) {
 
-    long delay = ChronoUnit.MILLIS.between(LocalTime.now(),
+    long delay = ChronoUnit.MILLIS.between(LocalDateTime.now(),
         Utilities.fromDateTimeString(marketClock.getNextClose()));
 
     LOGGER.info("Market will Close in " + TimeUnit.MINUTES.convert(delay, TimeUnit.MILLISECONDS)
