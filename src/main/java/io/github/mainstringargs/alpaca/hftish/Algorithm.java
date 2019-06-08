@@ -320,6 +320,8 @@ public class Algorithm {
     }
 
     if (message.getStockTrade().getS() >= 100) {
+
+
       // The trade was large enough to follow, so we check to see if
       // we're ready to trade. We also check to see that the
       // bid vs ask quantities (order book imbalance) indicate
@@ -331,22 +333,31 @@ public class Algorithm {
           && ((position.getTotalShares() + position.getPendingBuyShares()) < algoConfig
               .getQuantity() - 100)) {
 
+
+
         try {
 
-          LOGGER.info("Buy " + 100 + " of " + algoConfig.getSymbol() + " at "
-              + currFormat.format(quote.getAsk()) + "; Current shares: "
-              + position.getTotalShares());
+          double buyingPower = Double.parseDouble(alpacaApi.getAccount().getBuyingPower());
 
-          Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), 100, OrderSide.BUY,
-              OrderType.LIMIT, OrderTimeInForce.DAY, quote.getAsk(), null, null);
-          // Approximate an IOC order by immediately cancelling
-          alpacaApi.cancelOrder(order.getId());
+          if (buyingPower > (quote.getAsk() * 100)) {
 
-          position.updatePendingBuyShares(100);
-          position.setOrdersFilledAmount(order.getId(), 0);
+            LOGGER.info("Buy " + 100 + " of " + algoConfig.getSymbol() + " at "
+                + currFormat.format(quote.getAsk()) + "; Current shares: "
+                + position.getTotalShares());
+
+            Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), 100, OrderSide.BUY,
+                OrderType.LIMIT, OrderTimeInForce.DAY, quote.getAsk(), null, null);
+            // Approximate an IOC order by immediately cancelling
+            alpacaApi.cancelOrder(order.getId());
+
+            position.updatePendingBuyShares(100);
+            position.setOrdersFilledAmount(order.getId(), 0);
 
 
-          quote.setTraded(true);
+            quote.setTraded(true);
+          } else {
+            LOGGER.info("Ignoring buy; Not enough buying power: " + currFormat.format(buyingPower));
+          }
 
         } catch (AlpacaAPIException e) {
           e.printStackTrace();
