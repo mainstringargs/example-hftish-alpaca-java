@@ -18,6 +18,7 @@ import io.github.mainstringargs.alpaca.enums.OrderSide;
 import io.github.mainstringargs.alpaca.enums.OrderStatus;
 import io.github.mainstringargs.alpaca.enums.OrderTimeInForce;
 import io.github.mainstringargs.alpaca.enums.OrderType;
+import io.github.mainstringargs.alpaca.properties.AlpacaProperties;
 import io.github.mainstringargs.alpaca.rest.exceptions.AlpacaAPIException;
 import io.github.mainstringargs.alpaca.websocket.message.OrderUpdateMessage;
 import io.github.mainstringargs.polygon.PolygonAPI;
@@ -86,8 +87,19 @@ public class Algorithm {
     quote = new Quote();
     position = new Position();
 
-    polygonApi = new PolygonAPI();
-    alpacaApi = new AlpacaAPI();
+    String key = algoConfig.getKey();
+    String secret = algoConfig.getSecret();
+
+    if (key.equals(AlgoConfig.PLACEHOLDER_DEFAULT)) {
+      key = AlpacaProperties.KEY_ID_VALUE;
+    }
+    if (secret.equals(AlgoConfig.PLACEHOLDER_DEFAULT)) {
+      secret = AlpacaProperties.SECRET_VALUE;
+    }
+
+    alpacaApi = new AlpacaAPI(key, secret, AlpacaProperties.BASE_ACCOUNT_URL_VALUE);
+    polygonApi = new PolygonAPI(key, secret);
+
 
     Clock marketClock = null;
     try {
@@ -311,8 +323,8 @@ public class Algorithm {
       return;
     }
 
-//    System.out.println(new Date(message.getStockTrade().getT()) + " "+new Date(quote.getTime()));
-    
+    // System.out.println(new Date(message.getStockTrade().getT()) + " "+new Date(quote.getTime()));
+
     // We've received a trade and might be ready to follow it
     if (message.getStockTrade().getT() <= (quote.getTime() + 50)) {
       // The trade came too close to the quote update

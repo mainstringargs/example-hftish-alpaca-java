@@ -7,7 +7,8 @@ import picocli.CommandLine.Option;
  */
 class AlgoConfig {
 
-
+  /** The Constant PLACEHOLDER_DEFAULT. */
+  public static final String PLACEHOLDER_DEFAULT = "<PLACEHOLDER>";
 
   /** The symbol. */
   @Option(names = {"-s", "--symbol"}, defaultValue = "SNAP",
@@ -18,6 +19,16 @@ class AlgoConfig {
   @Option(names = {"-q", "--quantity"}, defaultValue = "500",
       description = "the maximum number of shares to hold at once. Note that this does not account for any existing position; the algorithm only tracks what is bought as part of its execution. (Default 500, minimum 100.)")
   private int quantity;
+
+  /** The key. */
+  @Option(names = {"-key", "--alpaca-key"}, defaultValue = PLACEHOLDER_DEFAULT,
+      description = "The key used for Alpaca authentication")
+  private String key;
+
+  /** The secret. */
+  @Option(names = {"-secret", "--alpaca-secret"}, defaultValue = PLACEHOLDER_DEFAULT,
+      description = "The secret used for Alpaca authentication")
+  private String secret;
 
   /**
    * Gets the symbol.
@@ -37,14 +48,28 @@ class AlgoConfig {
     return quantity;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
+  /**
+   * Gets the key.
+   *
+   * @return the key
    */
+  public String getKey() {
+    return key;
+  }
+
+  /**
+   * Gets the secret.
+   *
+   * @return the secret
+   */
+  public String getSecret() {
+    return secret;
+  }
+
   @Override
   public String toString() {
-    return "AlgoConfig [symbol=" + symbol + ", quantity=" + quantity + "]";
+    return "AlgoConfig [symbol=" + symbol + ", quantity=" + quantity + ", key=" + key + ", secret="
+        + secret + "]";
   }
 
 
