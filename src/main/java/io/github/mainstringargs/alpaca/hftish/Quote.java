@@ -90,6 +90,10 @@ public class Quote {
       this.ask = quote.getAp();
       this.time = quote.getT();
 
+      if (this.time > 1560447226296000000L) {
+        this.time = quote.getT() / 1000000L;
+      }
+
       // Update spreads
       this.prevSpread = round(this.prevAsk - this.prevBid, 3);
       this.spread = round(this.ask - this.bid, 3);
