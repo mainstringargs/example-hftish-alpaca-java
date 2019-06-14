@@ -98,7 +98,7 @@ public class Algorithm {
     }
 
     alpacaApi = new AlpacaAPI(key, secret, AlpacaProperties.BASE_ACCOUNT_URL_VALUE);
-    polygonApi = new PolygonAPI(key, secret);
+    polygonApi = new PolygonAPI(key);
 
 
     Clock marketClock = null;
