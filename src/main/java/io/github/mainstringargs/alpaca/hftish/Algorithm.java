@@ -342,7 +342,7 @@ public class Algorithm {
       // we're not buying or selling more than we should.
 
       if (Math.abs(message.getStockTrade().getP() - quote.getAsk()) < DOUBLE_THRESHOLD
-          && Double.compare(quote.getBidSize(), quote.getAskSize() * 1.8) > 0.0
+          && Double.compare(quote.getBidSize(), (double) quote.getAskSize() * 1.8) > 0.0
           && ((position.getTotalShares() + position.getPendingBuyShares()) < algoConfig
               .getQuantity() - 100)) {
 
@@ -361,7 +361,7 @@ public class Algorithm {
             Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), 100, OrderSide.BUY,
                 OrderType.LIMIT, OrderTimeInForce.DAY, quote.getAsk(), null, null);
             // Approximate an IOC order by immediately cancelling
-            alpacaApi.cancelOrder(order.getId());
+            alpacaApi.cancelOrder(order.getId().trim());
 
             position.updatePendingBuyShares(100);
             position.setOrdersFilledAmount(order.getId(), 0);
@@ -377,7 +377,7 @@ public class Algorithm {
         }
 
       } else if (Math.abs(message.getStockTrade().getP() - quote.getBid()) < DOUBLE_THRESHOLD
-          && Double.compare(quote.getAskSize(), quote.getBidSize() * 1.8) > 0.0
+          && Double.compare(quote.getAskSize(), (double) quote.getBidSize() * 1.8) > 0.0
           && ((position.getTotalShares() - position.getPendingSellShares()) >= 100)
           && position.getTotalShares() > 0) {
 
@@ -396,10 +396,10 @@ public class Algorithm {
           Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), (int) numberToSell,
               OrderSide.SELL, OrderType.LIMIT, OrderTimeInForce.DAY, quote.getBid(), null, null);
           // Approximate an IOC order by immediately cancelling
-          alpacaApi.cancelOrder(order.getId());
+          alpacaApi.cancelOrder(order.getId().trim());
 
           position.updatePendingSellShares(numberToSell);
-          position.setOrdersFilledAmount(order.getId(), 0);
+          position.setOrdersFilledAmount(order.getId().trim(), 0);
 
 
           quote.setTraded(true);
@@ -422,21 +422,23 @@ public class Algorithm {
     if (message.getEvent() == OrderEvent.FILL) {
 
       if (message.getOrder().getSide().trim().equalsIgnoreCase("Buy")) {
-        position.updateFilledAmount(message.getOrder().getId(),
-            Integer.parseInt(message.getOrder().getFilledQty()), message.getOrder().getSide());
+        // position.updateFilledAmount(message.getOrder().getId(),
+        // Integer.parseInt(message.getOrder().getFilledQty()), message.getOrder().getSide());
+        position.updateTotalShares(Integer.parseInt(message.getOrder().getFilledQty()));
       } else {
-        position.updateFilledAmount(message.getOrder().getId(),
-            Integer.parseInt(message.getOrder().getFilledQty()), message.getOrder().getSide());
+        // position.updateFilledAmount(message.getOrder().getId(),
+        // Integer.parseInt(message.getOrder().getFilledQty()), message.getOrder().getSide());
+        position.updateTotalShares(-1 * Integer.parseInt(message.getOrder().getFilledQty()));
       }
 
-      position.removePendingOrder(message.getOrder().getId(),
+      position.removePendingOrder(message.getOrder().getId().trim(),
           Integer.parseInt(message.getOrder().getFilledQty()), message.getOrder().getSide());
     } else if (message.getEvent() == OrderEvent.PARTIALLY_FILLED) {
-      position.updateFilledAmount(message.getOrder().getId(),
+      position.updateFilledAmount(message.getOrder().getId().trim(),
           Integer.parseInt(message.getOrder().getFilledQty()), message.getOrder().getSide());
     } else if (message.getEvent() == OrderEvent.CANCELED
         || message.getEvent() == OrderEvent.REJECTED) {
-      position.removePendingOrder(message.getOrder().getId(),
+      position.removePendingOrder(message.getOrder().getId().trim(),
           Integer.parseInt(message.getOrder().getQty()), message.getOrder().getSide());
     }
   }

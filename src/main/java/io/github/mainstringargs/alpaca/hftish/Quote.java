@@ -49,7 +49,7 @@ public class Quote {
 
   /** The time. */
   private long time = 0;
-  
+
   /**
    * Called when a level change happens.
    */
@@ -81,8 +81,9 @@ public class Quote {
     this.askSize = quote.getAs();
 
     // Check if there has been a level change
-    if (Double.compare(bid, quote.getBp()) != 0.0 && Double.compare(ask, quote.getAp()) != 0.0d
-        && (Math.abs(round(quote.getAp() - quote.getBp(), 2) - .01) < Algorithm.DOUBLE_THRESHOLD)) {
+    if ((Math.abs(round(bid - quote.getBp(), 3)) > Algorithm.DOUBLE_THRESHOLD)
+        && (Math.abs(round(ask - quote.getAp(), 3)) > Algorithm.DOUBLE_THRESHOLD)
+        && (round(quote.getAp() - quote.getBp(), 2) == 0.01)) {
       // Update bids and asks and time of level change
       this.prevBid = this.bid;
       this.prevAsk = this.ask;
@@ -104,7 +105,7 @@ public class Quote {
       // If change is from one penny spread level to a different penny
       // spread level, then initialize for new level (reset stale vars)
 
-      if (Math.abs(prevSpread - 0.01) < Algorithm.DOUBLE_THRESHOLD) {
+      if (prevSpread == 0.01) {
         this.reset();
       }
 
