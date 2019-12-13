@@ -1,11 +1,10 @@
 package io.github.mainstringargs.alpaca.hftish;
 
-import io.github.mainstringargs.polygon.enums.ChannelType;
-import io.github.mainstringargs.polygon.nats.PolygonStreamListenerAdapter;
-import io.github.mainstringargs.polygon.nats.message.ChannelMessage;
-import io.github.mainstringargs.polygon.nats.message.QuotesMessage;
-import io.github.mainstringargs.polygon.nats.message.TradesMessage;
-
+import io.github.mainstringargs.domain.polygon.websocket.PolygonStreamMessage;
+import io.github.mainstringargs.domain.polygon.websocket.quote.QuoteMessage;
+import io.github.mainstringargs.domain.polygon.websocket.trade.TradeMessage;
+import io.github.mainstringargs.polygon.websocket.listener.PolygonStreamListenerAdapter;
+import io.github.mainstringargs.polygon.websocket.message.PolygonStreamMessageType;
 
 /**
  * The listener interface for receiving algoPolygonStream events. The class that is interested in
@@ -18,39 +17,40 @@ import io.github.mainstringargs.polygon.nats.message.TradesMessage;
  */
 public class AlgoPolygonStreamListener extends PolygonStreamListenerAdapter {
 
-  /** The algorithm. */
-  private Algorithm algorithm;
+    /** The algorithm. */
+    private Algorithm algorithm;
 
-  /**
-   * Instantiates a new algo polygon stream listener.
-   *
-   * @param algorithm the algorithm
-   */
-  public AlgoPolygonStreamListener(Algorithm algorithm) {
-    super(algorithm.getAlgoConfig().getSymbol(), ChannelType.QUOTES, ChannelType.TRADES);
-    this.algorithm = algorithm;
-  }
-
-
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see io.github.mainstringargs.polygon.nats.PolygonStreamListenerAdapter#streamUpdate(java.lang.
-   * String, io.github.mainstringargs.polygon.enums.ChannelType,
-   * io.github.mainstringargs.polygon.nats.message.ChannelMessage)
-   */
-  @Override
-  public void streamUpdate(String ticker, ChannelType channelType, ChannelMessage message) {
-    switch (channelType) {
-      case QUOTES:
-        algorithm.onQuote((QuotesMessage) message);
-        break;
-      case TRADES:
-        algorithm.onTrade((TradesMessage) message);
-        break;
+    /**
+     * Instantiates a new algo polygon stream listener.
+     *
+     * @param algorithm the algorithm
+     */
+    public AlgoPolygonStreamListener(Algorithm algorithm) {
+        super(algorithm.getAlgoConfig().getSymbol(), PolygonStreamMessageType.QUOTE,
+                        PolygonStreamMessageType.TRADE);
+        this.algorithm = algorithm;
     }
 
-  }
+
+
+    /**
+     * On stream update.
+     *
+     * @param streamMessageType the stream message type
+     * @param streamMessage the stream message
+     */
+    @Override
+    public void onStreamUpdate(PolygonStreamMessageType streamMessageType,
+                    PolygonStreamMessage streamMessage) {
+        switch (streamMessageType) {
+            case QUOTE:
+                algorithm.onQuote((QuoteMessage) streamMessage);
+                break;
+            case TRADE:
+                algorithm.onTrade((TradeMessage) streamMessage);
+                break;
+        }
+
+    }
 
 }

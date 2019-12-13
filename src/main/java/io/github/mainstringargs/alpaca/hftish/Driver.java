@@ -11,23 +11,23 @@ import picocli.CommandLine.ParseResult;
 public class Driver {
 
 
-  /** The logger. */
-  private static Logger LOGGER = LogManager.getLogger(Driver.class);
+    /** The logger. */
+    private static Logger LOGGER = LogManager.getLogger(Driver.class);
 
-  /**
-   * The main method.
-   *
-   * @param args the arguments
-   */
-  public static void main(String[] args) {
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
+    public static void main(String[] args) {
 
-    CommandLine commandLine = new CommandLine(new AlgoConfig());
-    ParseResult parsed = commandLine.parseArgs(args);
-    AlgoConfig algoConfig = (AlgoConfig) parsed.commandSpec().userObject();
-    LOGGER.info("Arguments: " + algoConfig);
+        CommandLine commandLine = new CommandLine(new AlgoConfig());
+        ParseResult parsed = commandLine.parseArgs(args);
+        AlgoConfig algoConfig = (AlgoConfig) parsed.commandSpec().userObject();
+        LOGGER.info("Arguments: " + algoConfig);
 
-    Algorithm algorithm = new Algorithm(algoConfig);
+        Algorithm algorithm = new Algorithm(algoConfig);
 
-  }
+    }
 
 }

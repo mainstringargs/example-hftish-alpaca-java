@@ -2,7 +2,7 @@ package io.github.mainstringargs.alpaca.hftish;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import io.github.mainstringargs.polygon.domain.StockQuote;
+import io.github.mainstringargs.domain.polygon.websocket.quote.QuoteMessage;
 
 /**
  * 
@@ -14,315 +14,316 @@ import io.github.mainstringargs.polygon.domain.StockQuote;
  */
 public class Quote {
 
-  /** The logger. */
-  private static Logger LOGGER = LogManager.getLogger(Quote.class);
+    /** The logger. */
+    private static Logger LOGGER = LogManager.getLogger(Quote.class);
 
-  /** The prev bid. */
-  private double prevBid = 0.0;
+    /** The prev bid. */
+    private double prevBid = 0.0;
 
-  /** The prev ask. */
-  private double prevAsk = 0.0;
+    /** The prev ask. */
+    private double prevAsk = 0.0;
 
-  /** The prev spread. */
-  private double prevSpread = 0.0;
+    /** The prev spread. */
+    private double prevSpread = 0.0;
 
-  /** The bid. */
-  private double bid = 0.0;
+    /** The bid. */
+    private double bid = 0.0;
 
-  /** The ask. */
-  private double ask = 0.0;
+    /** The ask. */
+    private double ask = 0.0;
 
-  /** The bid size. */
-  private long bidSize = 0;
+    /** The bid size. */
+    private long bidSize = 0;
 
-  /** The ask size. */
-  private long askSize = 0;
+    /** The ask size. */
+    private long askSize = 0;
 
-  /** The spread. */
-  private double spread = 0.0;
+    /** The spread. */
+    private double spread = 0.0;
 
-  /** The traded. */
-  private boolean traded = true;
+    /** The traded. */
+    private boolean traded = true;
 
-  /** The level ct. */
-  private long levelCt = 1;
+    /** The level ct. */
+    private long levelCt = 1;
 
-  /** The time. */
-  private long time = 0;
+    /** The time. */
+    private long time = 0;
 
-  /**
-   * Called when a level change happens.
-   */
-  public synchronized void reset() {
-    traded = false;
-    levelCt += 1;
-  }
-
-  /**
-   * Round value to specified number of places.
-   *
-   * @param value the value
-   * @param places the places
-   * @return the double
-   */
-  public static double round(double value, int places) {
-    double scale = Math.pow(10, places);
-    return Math.round(value * scale) / scale;
-  }
-
-  /**
-   * Update the Quote.
-   *
-   * @param quote the quote
-   */
-  public synchronized void update(StockQuote quote) {
-    // Update bid and ask sizes and timestamp
-    this.bidSize = quote.getBs();
-    this.askSize = quote.getAs();
-
-    // Check if there has been a level change
-    if ((Math.abs(round(bid - quote.getBp(), 3)) > Algorithm.DOUBLE_THRESHOLD)
-        && (Math.abs(round(ask - quote.getAp(), 3)) > Algorithm.DOUBLE_THRESHOLD)
-        && (round(quote.getAp() - quote.getBp(), 2) == 0.01)) {
-      // Update bids and asks and time of level change
-      this.prevBid = this.bid;
-      this.prevAsk = this.ask;
-      this.bid = quote.getBp();
-      this.ask = quote.getAp();
-      this.time = quote.getT();
-
-      if (this.time > 1560447226296000000L) {
-        this.time = quote.getT() / 1000000L;
-      }
-
-      // Update spreads
-      this.prevSpread = round(this.prevAsk - this.prevBid, 3);
-      this.spread = round(this.ask - this.bid, 3);
-
-      LOGGER.debug("Level Change: " + this.prevBid + " " + this.prevAsk + " " + this.prevSpread
-          + " " + this.bid + " " + this.ask + " " + this.spread);
-
-      // If change is from one penny spread level to a different penny
-      // spread level, then initialize for new level (reset stale vars)
-
-      if (prevSpread == 0.01) {
-        this.reset();
-      }
-
-
+    /**
+     * Called when a level change happens.
+     */
+    public synchronized void reset() {
+        traded = false;
+        levelCt += 1;
     }
-  }
 
-  /**
-   * Gets the prev bid.
-   *
-   * @return the prev bid
-   */
-  public synchronized double getPrevBid() {
-    return prevBid;
-  }
+    /**
+     * Round value to specified number of places.
+     *
+     * @param value the value
+     * @param places the places
+     * @return the double
+     */
+    public static double round(double value, int places) {
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
+    }
 
-  /**
-   * Sets the prev bid.
-   *
-   * @param prevBid the new prev bid
-   */
-  public synchronized void setPrevBid(double prevBid) {
-    this.prevBid = prevBid;
-  }
+    /**
+     * Update the Quote.
+     *
+     * @param quote the quote
+     */
+    public synchronized void update(QuoteMessage quote) {
+        // Update bid and ask sizes and timestamp
+        this.bidSize = quote.getBs();
+        this.askSize = quote.getAs();
 
-  /**
-   * Gets the prev ask.
-   *
-   * @return the prev ask
-   */
-  public synchronized double getPrevAsk() {
-    return prevAsk;
-  }
+        // Check if there has been a level change
+        if ((Math.abs(round(bid - quote.getBp(), 3)) > Algorithm.DOUBLE_THRESHOLD)
+                        && (Math.abs(round(ask - quote.getAp(), 3)) > Algorithm.DOUBLE_THRESHOLD)
+                        && (round(quote.getAp() - quote.getBp(), 2) == 0.01)) {
+            // Update bids and asks and time of level change
+            this.prevBid = this.bid;
+            this.prevAsk = this.ask;
+            this.bid = quote.getBp();
+            this.ask = quote.getAp();
+            this.time = quote.getT();
 
-  /**
-   * Sets the prev ask.
-   *
-   * @param prevAsk the new prev ask
-   */
-  public synchronized void setPrevAsk(double prevAsk) {
-    this.prevAsk = prevAsk;
-  }
+            if (this.time > 1560447226296000000L) {
+                this.time = quote.getT() / 1000000L;
+            }
 
-  /**
-   * Gets the prev spread.
-   *
-   * @return the prev spread
-   */
-  public synchronized double getPrevSpread() {
-    return prevSpread;
-  }
+            // Update spreads
+            this.prevSpread = round(this.prevAsk - this.prevBid, 3);
+            this.spread = round(this.ask - this.bid, 3);
 
-  /**
-   * Sets the prev spread.
-   *
-   * @param prevSpread the new prev spread
-   */
-  public synchronized void setPrevSpread(double prevSpread) {
-    this.prevSpread = prevSpread;
-  }
+            LOGGER.debug("Level Change: " + this.prevBid + " " + this.prevAsk + " "
+                            + this.prevSpread + " " + this.bid + " " + this.ask + " "
+                            + this.spread);
 
-  /**
-   * Gets the bid.
-   *
-   * @return the bid
-   */
-  public synchronized double getBid() {
-    return bid;
-  }
+            // If change is from one penny spread level to a different penny
+            // spread level, then initialize for new level (reset stale vars)
 
-  /**
-   * Sets the bid.
-   *
-   * @param bid the new bid
-   */
-  public synchronized void setBid(double bid) {
-    this.bid = bid;
-  }
+            if (prevSpread == 0.01) {
+                this.reset();
+            }
 
-  /**
-   * Gets the ask.
-   *
-   * @return the ask
-   */
-  public synchronized double getAsk() {
-    return ask;
-  }
 
-  /**
-   * Sets the ask.
-   *
-   * @param ask the new ask
-   */
-  public synchronized void setAsk(double ask) {
-    this.ask = ask;
-  }
+        }
+    }
 
-  /**
-   * Gets the bid size.
-   *
-   * @return the bid size
-   */
-  public synchronized long getBidSize() {
-    return bidSize;
-  }
+    /**
+     * Gets the prev bid.
+     *
+     * @return the prev bid
+     */
+    public synchronized double getPrevBid() {
+        return prevBid;
+    }
 
-  /**
-   * Sets the bid size.
-   *
-   * @param bidSize the new bid size
-   */
-  public synchronized void setBidSize(long bidSize) {
-    this.bidSize = bidSize;
-  }
+    /**
+     * Sets the prev bid.
+     *
+     * @param prevBid the new prev bid
+     */
+    public synchronized void setPrevBid(double prevBid) {
+        this.prevBid = prevBid;
+    }
 
-  /**
-   * Gets the ask size.
-   *
-   * @return the ask size
-   */
-  public synchronized long getAskSize() {
-    return askSize;
-  }
+    /**
+     * Gets the prev ask.
+     *
+     * @return the prev ask
+     */
+    public synchronized double getPrevAsk() {
+        return prevAsk;
+    }
 
-  /**
-   * Sets the ask size.
-   *
-   * @param askSize the new ask size
-   */
-  public synchronized void setAskSize(long askSize) {
-    this.askSize = askSize;
-  }
+    /**
+     * Sets the prev ask.
+     *
+     * @param prevAsk the new prev ask
+     */
+    public synchronized void setPrevAsk(double prevAsk) {
+        this.prevAsk = prevAsk;
+    }
 
-  /**
-   * Gets the spread.
-   *
-   * @return the spread
-   */
-  public synchronized double getSpread() {
-    return spread;
-  }
+    /**
+     * Gets the prev spread.
+     *
+     * @return the prev spread
+     */
+    public synchronized double getPrevSpread() {
+        return prevSpread;
+    }
 
-  /**
-   * Sets the spread.
-   *
-   * @param spread the new spread
-   */
-  public synchronized void setSpread(double spread) {
-    this.spread = spread;
-  }
+    /**
+     * Sets the prev spread.
+     *
+     * @param prevSpread the new prev spread
+     */
+    public synchronized void setPrevSpread(double prevSpread) {
+        this.prevSpread = prevSpread;
+    }
 
-  /**
-   * Checks if is traded.
-   *
-   * @return true, if is traded
-   */
-  public synchronized boolean isTraded() {
-    return traded;
-  }
+    /**
+     * Gets the bid.
+     *
+     * @return the bid
+     */
+    public synchronized double getBid() {
+        return bid;
+    }
 
-  /**
-   * Sets the traded.
-   *
-   * @param traded the new traded
-   */
-  public synchronized void setTraded(boolean traded) {
-    this.traded = traded;
-  }
+    /**
+     * Sets the bid.
+     *
+     * @param bid the new bid
+     */
+    public synchronized void setBid(double bid) {
+        this.bid = bid;
+    }
 
-  /**
-   * Gets the level ct.
-   *
-   * @return the level ct
-   */
-  public synchronized long getLevelCt() {
-    return levelCt;
-  }
+    /**
+     * Gets the ask.
+     *
+     * @return the ask
+     */
+    public synchronized double getAsk() {
+        return ask;
+    }
 
-  /**
-   * Sets the level ct.
-   *
-   * @param levelCt the new level ct
-   */
-  public synchronized void setLevelCt(long levelCt) {
-    this.levelCt = levelCt;
-  }
+    /**
+     * Sets the ask.
+     *
+     * @param ask the new ask
+     */
+    public synchronized void setAsk(double ask) {
+        this.ask = ask;
+    }
 
-  /**
-   * Gets the time.
-   *
-   * @return the time
-   */
-  public synchronized long getTime() {
-    return time;
-  }
+    /**
+     * Gets the bid size.
+     *
+     * @return the bid size
+     */
+    public synchronized long getBidSize() {
+        return bidSize;
+    }
 
-  /**
-   * Sets the time.
-   *
-   * @param time the new time
-   */
-  public synchronized void setTime(long time) {
-    this.time = time;
-  }
+    /**
+     * Sets the bid size.
+     *
+     * @param bidSize the new bid size
+     */
+    public synchronized void setBidSize(long bidSize) {
+        this.bidSize = bidSize;
+    }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
-  @Override
-  public String toString() {
-    return "Quote [prevBid=" + prevBid + ", prevAsk=" + prevAsk + ", prevSpread=" + prevSpread
-        + ", bid=" + bid + ", ask=" + ask + ", bidSize=" + bidSize + ", askSize=" + askSize
-        + ", spread=" + spread + ", traded=" + traded + ", levelCt=" + levelCt + ", time=" + time
-        + "]";
-  }
+    /**
+     * Gets the ask size.
+     *
+     * @return the ask size
+     */
+    public synchronized long getAskSize() {
+        return askSize;
+    }
+
+    /**
+     * Sets the ask size.
+     *
+     * @param askSize the new ask size
+     */
+    public synchronized void setAskSize(long askSize) {
+        this.askSize = askSize;
+    }
+
+    /**
+     * Gets the spread.
+     *
+     * @return the spread
+     */
+    public synchronized double getSpread() {
+        return spread;
+    }
+
+    /**
+     * Sets the spread.
+     *
+     * @param spread the new spread
+     */
+    public synchronized void setSpread(double spread) {
+        this.spread = spread;
+    }
+
+    /**
+     * Checks if is traded.
+     *
+     * @return true, if is traded
+     */
+    public synchronized boolean isTraded() {
+        return traded;
+    }
+
+    /**
+     * Sets the traded.
+     *
+     * @param traded the new traded
+     */
+    public synchronized void setTraded(boolean traded) {
+        this.traded = traded;
+    }
+
+    /**
+     * Gets the level ct.
+     *
+     * @return the level ct
+     */
+    public synchronized long getLevelCt() {
+        return levelCt;
+    }
+
+    /**
+     * Sets the level ct.
+     *
+     * @param levelCt the new level ct
+     */
+    public synchronized void setLevelCt(long levelCt) {
+        this.levelCt = levelCt;
+    }
+
+    /**
+     * Gets the time.
+     *
+     * @return the time
+     */
+    public synchronized long getTime() {
+        return time;
+    }
+
+    /**
+     * Sets the time.
+     *
+     * @param time the new time
+     */
+    public synchronized void setTime(long time) {
+        this.time = time;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Quote [prevBid=" + prevBid + ", prevAsk=" + prevAsk + ", prevSpread=" + prevSpread
+                        + ", bid=" + bid + ", ask=" + ask + ", bidSize=" + bidSize + ", askSize="
+                        + askSize + ", spread=" + spread + ", traded=" + traded + ", levelCt="
+                        + levelCt + ", time=" + time + "]";
+    }
 
 
 }

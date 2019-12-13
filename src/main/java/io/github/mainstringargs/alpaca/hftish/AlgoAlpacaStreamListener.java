@@ -1,10 +1,9 @@
 package io.github.mainstringargs.alpaca.hftish;
 
-import io.github.mainstringargs.alpaca.enums.MessageType;
-import io.github.mainstringargs.alpaca.websocket.AlpacaStreamListenerAdapter;
-import io.github.mainstringargs.alpaca.websocket.message.OrderUpdateMessage;
-import io.github.mainstringargs.alpaca.websocket.message.UpdateMessage;
-
+import io.github.mainstringargs.alpaca.websocket.listener.AlpacaStreamListenerAdapter;
+import io.github.mainstringargs.alpaca.websocket.message.AlpacaStreamMessageType;
+import io.github.mainstringargs.domain.alpaca.websocket.AlpacaStreamMessage;
+import io.github.mainstringargs.domain.alpaca.websocket.trade.TradeUpdateMessage;
 
 /**
  * The listener interface for receiving algoAlpacaStream events. The class that is interested in
@@ -17,33 +16,30 @@ import io.github.mainstringargs.alpaca.websocket.message.UpdateMessage;
  */
 public class AlgoAlpacaStreamListener extends AlpacaStreamListenerAdapter {
 
-  /** The algorithm. */
-  private Algorithm algorithm;
+    /** The algorithm. */
+    private Algorithm algorithm;
 
-  /**
-   * Instantiates a new algo alpaca stream listener.
-   *
-   * @param algorithm the algorithm
-   */
-  public AlgoAlpacaStreamListener(Algorithm algorithm) {
-    super(MessageType.ORDER_UPDATES);
-    this.algorithm = algorithm;
-  }
-
-
-
-  /* (non-Javadoc)
-   * @see io.github.mainstringargs.alpaca.websocket.AlpacaStreamListenerAdapter#streamUpdate(io.github.mainstringargs.alpaca.enums.MessageType, io.github.mainstringargs.alpaca.websocket.message.UpdateMessage)
-   */
-  @Override
-  public void streamUpdate(MessageType messageType, UpdateMessage message) {
-    switch (messageType) {
-      case ORDER_UPDATES:
-
-        algorithm.onTradeUpdates((OrderUpdateMessage) message);
-        break;
+    /**
+     * Instantiates a new algo alpaca stream listener.
+     *
+     * @param algorithm the algorithm
+     */
+    public AlgoAlpacaStreamListener(Algorithm algorithm) {
+        super(AlpacaStreamMessageType.TRADE_UPDATES);
+        this.algorithm = algorithm;
     }
 
-  }
+
+
+    @Override
+    public void onStreamUpdate(AlpacaStreamMessageType streamMessageType,
+                    AlpacaStreamMessage streamMessage) {
+        switch (streamMessageType) {
+            case TRADE_UPDATES:
+
+                algorithm.onTradeUpdates((TradeUpdateMessage) streamMessage);
+                break;
+        }
+    }
 
 }
