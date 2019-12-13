@@ -12,7 +12,6 @@ import io.github.mainstringargs.domain.alpaca.websocket.trade.TradeUpdateMessage
  * <code>addAlgoAlpacaStreamListener</code> method. When the algoAlpacaStream event occurs, that
  * object's appropriate method is invoked.
  *
- * @see UpdateMessage
  */
 public class AlgoAlpacaStreamListener extends AlpacaStreamListenerAdapter {
 
@@ -31,6 +30,12 @@ public class AlgoAlpacaStreamListener extends AlpacaStreamListenerAdapter {
 
 
 
+    /**
+     * On stream update.
+     *
+     * @param streamMessageType the stream message type
+     * @param streamMessage the stream message
+     */
     @Override
     public void onStreamUpdate(AlpacaStreamMessageType streamMessageType,
                     AlpacaStreamMessage streamMessage) {
