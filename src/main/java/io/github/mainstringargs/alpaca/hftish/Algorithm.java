@@ -223,7 +223,7 @@ public class Algorithm {
         List<Order> orders = null;
         try {
             orders = alpacaApi.getOrders(OrderStatus.OPEN, 50, null, ZonedDateTime.now(),
-                            Direction.ASCENDING);
+                            Direction.ASCENDING, false);
         } catch (AlpacaAPIRequestException e) {
             e.printStackTrace();
         }
@@ -362,7 +362,7 @@ public class Algorithm {
 
                         Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(), 100,
                                         OrderSide.BUY, OrderType.LIMIT, OrderTimeInForce.DAY,
-                                        quote.getAsk(), null, false, null);
+                                        quote.getAsk(), null, false, null, null, null, null, null);
                         // Approximate an IOC order by immediately cancelling
                         alpacaApi.cancelOrder(order.getId().trim());
 
@@ -401,7 +401,8 @@ public class Algorithm {
 
                     Order order = alpacaApi.requestNewOrder(algoConfig.getSymbol(),
                                     (int) numberToSell, OrderSide.SELL, OrderType.LIMIT,
-                                    OrderTimeInForce.DAY, quote.getBid(), null, false, null);
+                                    OrderTimeInForce.DAY, quote.getBid(), null, false, null, null,
+                                    null, null, null);
                     // Approximate an IOC order by immediately cancelling
                     alpacaApi.cancelOrder(order.getId().trim());
 
